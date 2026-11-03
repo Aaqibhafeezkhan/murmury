@@ -367,9 +367,9 @@ def start(copilot_ready: threading.Event, holder: dict, bridge: Bridge, args) ->
             copilot = PreparedCopilot(text, situation=args.situation, model=args.model, style=args.style)
         else:
             key = providers.api_key(service.id)[0]
-            if not key:
+            if service.key_required and not key:
                 raise RuntimeError(f"no {service.name} key: add one on the setup screen")
-            copilot = OpenAICopilot(text, args.situation, service, key, args.model, args.style)
+            copilot = OpenAICopilot(text, args.situation, service, key or "local", args.model, args.style)
     except Exception as error:
         bridge.status.emit(f"Could not reach the model: {str(error)[:120]}")
         return

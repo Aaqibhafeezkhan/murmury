@@ -1,4 +1,4 @@
-"""The AI services Murmury can answer through, each with the user's own API key.
+"""The AI services Murmury can answer through, including local OpenAI-compatible servers.
 
 Anthropic is reached through its own SDK (prompt caching, the separate question check). Every other service
 speaks the OpenAI chat format at its own address, so one client covers them all (openai_copilot.py).
@@ -32,6 +32,7 @@ class Provider:
     prefer: tuple[str, ...] = ()         # fallback suggestion: patterns, best first
     hide: tuple[str, ...] = ()           # models that cannot write a chat answer
     options: dict = field(default_factory=dict)  # extra request fields this service accepts
+    key_required: bool = True
 
 
 COMMON_HIDE = (r"embed", r"whisper", r"tts", r"transcribe", r"audio", r"realtime", r"image", r"dall-e",
@@ -45,6 +46,10 @@ PROVIDERS: list[Provider] = [
              env=("OPENAI_API_KEY",), prefer=(r"gpt-\d+(\.\d+)?-mini$", r"gpt-\d+(\.\d+)?$"),
              hide=COMMON_HIDE + (r"^o\d", r"codex", r"instruct", r"babbage", r"davinci", r"gpt-3"),
              options={"prompt_cache_key": "murmury"}),
+    Provider("ollama", "Ollama · local", "http://localhost:11434/v1", "No key required", "",
+             key_required=False, prefer=(r"llama", r"qwen", r"mistral", r"gemma"), hide=COMMON_HIDE),
+    Provider("lm-studio", "LM Studio · local", "http://localhost:1234/v1", "No key required", "",
+             key_required=False, prefer=(r"llama", r"qwen", r"mistral", r"gemma"), hide=COMMON_HIDE),
     Provider("gemini", "Google · Gemini", "https://generativelanguage.googleapis.com/v1beta/openai/", "AIza…",
              "https://aistudio.google.com/apikey", env=("GEMINI_API_KEY", "GOOGLE_API_KEY"),
              free="free tier: Google may use what you send to improve its products",
@@ -87,6 +92,8 @@ _keychain_cache: dict[str, str | None] = {}  # one Keychain read per service per
 def api_key(provider_id: str) -> tuple[str | None, str]:
     """The key for this service and where it came from."""
     p = provider(provider_id)
+    if not p.key_required:
+        return None, ""
     for name in p.env:
         if os.environ.get(name):
             return os.environ[name], name
@@ -118,15 +125,15 @@ def save_api_key(provider_id: str, key: str | None) -> None:
 
 
 # models
-def list_models(provider_id: str, key: str) -> list[str]:
-    """The chat models this key can use, as the service lists them (a free call)."""
+def list_models(provider_id: str, key: str | None = None) -> list[str]:
+    """List chat models exposed by the provider; local OpenAI-compatible servers need no key."""
     p = provider(provider_id)
     if p.base_url is None:
         import anthropic
         ids = [m.id for m in anthropic.Anthropic(api_key=key).models.list(limit=100)]
     else:
         from openai import OpenAI
-        ids = [m.id for m in OpenAI(api_key=key, base_url=p.base_url, timeout=20).models.list()]
+        ids = [m.id for m in OpenAI(api_key=key or "local", base_url=p.base_url, timeout=20).models.list()]
     ids = [i.removeprefix("models/") for i in ids]  # Gemini names them models/<id>
     return sorted({i for i in ids if not any(re.search(h, i) for h in p.hide)})
 
@@ -161,7 +168,7 @@ def suggest(provider_id: str, models: list[str]) -> str | None:
     if not models:
         return None
     p = provider(provider_id)
-    for wanted in recommended().get(p.id, []):
+    for wanted in (recommended().get(p.id, []) if p.key_required else []):
         if wanted in models:
             return wanted
         matches = [m for m in models if re.search(wanted, m)]
