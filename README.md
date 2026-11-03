@@ -244,11 +244,15 @@ again after each macOS update.
 
 ## Roadmap
 
-- Windows version.
+The full list, with what is done, is in [issue #10](https://github.com/GianlucaBave/murmury/issues/10).
+
 - Local models through Ollama or LM Studio (OpenAI-format, so mostly configuration), fully offline.
-- Context from your tools before the call: Google Drive, Notion, CRM.
+- Answers in your voice: a few things you wrote or said teach Murmury your phrasing, tone and length.
+- Your own model: a small model fine-tuned on your Mac (MLX, LoRA) on the answers you choose to keep.
 - Global shortcuts (today they work when the window has focus).
 - Signed and notarized builds (Apple Developer ID), so macOS stops asking to "Open Anyway".
+- Windows version.
+- Context from your tools before the call: Google Drive, Notion, CRM.
 
 ## Contributing
 
