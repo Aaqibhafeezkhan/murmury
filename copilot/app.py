@@ -52,6 +52,7 @@ REF = re.compile(r"\[([^\]]{1,60})\]\s*$")
 
 
 MAX_LINES = 3  # fact lines a card shows under the SAY line: the answer style's limit, set at start
+ANSWERED = threading.Event()  # set once a card is shown: the next setup screen may then ask for a star
 FORMAT = "talking"  # the answer style's format: "script" lines show as one paragraph, the others as bullets
 
 
@@ -344,6 +345,7 @@ def run_answer(copilot: PreparedCopilot, bridge: Bridge, card: int, line: str, b
         if first is None:
             first = show.at - heard_at
             bridge.card.emit(card, line)
+            ANSWERED.set()
         if show.kind == "prepared":
             bridge.answer.emit(card, show.text)
         elif show.kind == "live-chunk":
@@ -469,7 +471,16 @@ def main(argv: list[str] | None = None) -> None:
     if not hidden and not args.show_in_screenshots:
         bridge.status.emit("Warning: this window may be visible when you share your screen")
     threading.Thread(target=start, args=(ready, holder, bridge, args), daemon=True).start()
+    app.aboutToQuit.connect(count_answered_call)
     app.exec()
+
+
+def count_answered_call() -> None:
+    """One more call in which Murmury answered something (the setup screen asks for a star after the first)."""
+    if ANSWERED.is_set():
+        from .setup import settings_store
+        settings = settings_store()
+        settings.setValue("answered_calls", int(settings.value("answered_calls", 0) or 0) + 1)
 
 
 if __name__ == "__main__":

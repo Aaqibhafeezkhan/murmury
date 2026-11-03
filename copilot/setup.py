@@ -32,6 +32,7 @@ SITUATIONS = [
     "a sales call with a prospective customer",
     "a negotiation with a partner",
 ]
+REPO_URL = "https://github.com/GianlucaBave/murmury"
 TYPES = "Documents (*.pdf *.xlsx *.xlsm *.txt *.md)"
 SUFFIXES = {".pdf", ".xlsx", ".xlsm", ".txt", ".md"}
 
@@ -79,6 +80,7 @@ QPushButton#link { background: transparent; border: none; color: $link; padding:
 QPushButton#link:hover { color: $link_hover; }
 QPushButton#close { background: transparent; border: none; color: $tertiary; font-size: 14px; padding: 0 4px; }
 QPushButton#close:hover { color: $text; }
+QFrame#star { background: $group; border: 1px solid $accent; border-radius: 10px; }
 QPushButton#remove { background: transparent; border: none; color: $faint; font-size: 13px; padding: 0 4px; }
 QPushButton#remove:hover { color: $danger; }
 QPushButton#cancel { background: $button; color: $text; border: 1px solid $button_border; border-radius: 6px;
@@ -921,11 +923,40 @@ class SetupDialog(QDialog):
                                             objectName="muted", alignment=Qt.AlignmentFlag.AlignCenter))
             self.call_list.addStretch(2)
             return
+        if int(self.settings.value("answered_calls", 0) or 0) >= 1 and self.settings.value("star_asked") != "true":
+            self.call_list.addWidget(self.star_banner())
         for call in calls:
             row = CallRow(call)
             row.clicked.connect(self.open_call)
             self.call_list.addWidget(row)
         self.call_list.addStretch(1)
+
+    def star_banner(self) -> QFrame:
+        """Asked once, after the first call Murmury answered in: a star helps other people find the project."""
+        banner = QFrame(objectName="star")
+        row = QHBoxLayout(banner)
+        row.setContentsMargins(14, 10, 8, 10)
+        text = QVBoxLayout()
+        text.setSpacing(2)
+        text.addWidget(QLabel("Did the elf help?", objectName="call_title"))
+        text.addWidget(QLabel("Murmury is free and open source. A star on GitHub helps other people find it.",
+                              objectName="muted"))
+        row.addLayout(text, 1)
+
+        def done(open_page: bool) -> None:
+            self.settings.setValue("star_asked", "true")
+            if open_page:
+                QDesktopServices.openUrl(QUrl(REPO_URL))
+            self.fill_home()
+
+        star = QPushButton("★  Star on GitHub", objectName="start", cursor=Qt.CursorShape.PointingHandCursor)
+        star.clicked.connect(lambda: done(True))
+        close = QPushButton("✕", objectName="close", cursor=Qt.CursorShape.PointingHandCursor)
+        close.setToolTip("Don't ask again")
+        close.clicked.connect(lambda: done(False))
+        row.addWidget(star)
+        row.addWidget(close, 0, Qt.AlignmentFlag.AlignTop)
+        return banner
 
     def new_call(self) -> None:
         self.current_call = None

@@ -22,7 +22,7 @@ coll = COLLECT(exe, a.binaries, a.datas, name="Murmury", upx=False)
 app = BUNDLE(
     coll, name="Murmury.app", icon="murmury.icns", bundle_identifier="dev.murmury.app",
     info_plist={
-        "CFBundleShortVersionString": "0.1.0",
+        "CFBundleShortVersionString": "0.1.1",
         "CFBundleVersion": "1",
         "LSMinimumSystemVersion": "13.0",
         "NSHighResolutionCapable": True,
