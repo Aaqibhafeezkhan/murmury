@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Murmury architecture</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column; diagrams break out to a wider measure; each figure carries one claim. */
+:root {
+  color-scheme: light;
+  --bg: #f5f6f9;
+  --surface: #ffffff;
+  --ink: #161a24;
+  --muted: #5a6274;
+  --line: #d6dae3;
+  --accent: #2f4fd6;        /* the copilot, the answer path */
+  --audio: #c26a12;         /* the audio path */
+  --cloud: #6b4fc8;         /* the one hop that leaves the Mac */
+  --accent-soft: #e6ebfc;
+  --audio-soft: #fbeedd;
+  --cloud-soft: #efeafb;
+  --ok: #1f7a4d;
+  --font-display: "IBM Plex Sans Condensed", "Arial Narrow", sans-serif;
+  --font-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #11141b; --surface: #181c25; --ink: #e6e9f0; --muted: #9aa2b4; --line: #2c3240;
+    --accent: #7d95ff; --audio: #f0a24f; --cloud: #b19bff;
+    --accent-soft: #1d2647; --audio-soft: #33240f; --cloud-soft: #271f42; --ok: #5fcf95;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #11141b; --surface: #181c25; --ink: #e6e9f0; --muted: #9aa2b4; --line: #2c3240;
+  --accent: #7d95ff; --audio: #f0a24f; --cloud: #b19bff;
+  --accent-soft: #1d2647; --audio-soft: #33240f; --cloud-soft: #271f42; --ok: #5fcf95;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.6; padding: 0 20px; }
+main { max-width: 980px; margin: 0 auto; padding-block: 48px 72px; display: grid; gap: 56px; }
+.prose { max-width: 66ch; }
+header { display: grid; gap: 14px; }
+.eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0; }
+h1 { font-family: var(--font-display); font-weight: 700; font-size: clamp(32px, 5vw, 46px); line-height: 1.05; margin: 0; text-wrap: balance; }
+h2 { font-family: var(--font-display); font-weight: 600; font-size: 26px; line-height: 1.15; margin: 0 0 8px; text-wrap: balance; }
+h3 { font-size: 16px; margin: 0 0 6px; }
+p { margin: 0 0 12px; }
+code { font-family: var(--font-mono); font-size: .9em; }
+.lede { font-size: 19px; color: var(--muted); max-width: 60ch; margin: 0; }
+section { display: grid; gap: 18px; }
+figure { margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 20px; overflow-x: auto; }
+figure svg { display: block; width: 100%; height: auto; min-width: 720px; }
+figcaption { font-size: 14px; color: var(--muted); margin-top: 12px; max-width: 80ch; }
+ul.points { margin: 0; padding-left: 20px; display: grid; gap: 6px; max-width: 72ch; }
+ul.points li::marker { color: var(--accent); }
+.legend { display: flex; flex-wrap: wrap; gap: 18px; font-size: 13px; color: var(--muted); margin: 0; padding: 0; list-style: none; }
+.legend li { display: flex; align-items: center; gap: 8px; }
+.sw { width: 22px; height: 0; border-top: 3px solid; display: inline-block; }
+.sw.audio { border-color: var(--audio); }
+.sw.app { border-color: var(--accent); }
+.sw.cloud { border-color: var(--cloud); border-top-style: dashed; }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; }
+.card p, .card li { font-size: 15px; }
+.tag { font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
+.note { font-size: 14px; color: var(--muted); }
+table { border-collapse: collapse; width: 100%; font-size: 15px; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-weight: 600; color: var(--muted); font-size: 13px; }
+.table-wrap { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 6px 10px; }
+.desk { position: relative; background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 24px; min-height: 380px; overflow: hidden; }
+.call { border: 1px dashed var(--line); border-radius: 8px; height: 330px; display: grid; place-items: center; color: var(--muted); font-size: 14px; text-align: center; padding: 16px; }
+.panel { position: absolute; top: 40px; right: 40px; width: min(400px, calc(100% - 48px)); background: var(--surface); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 18px 40px rgba(10, 14, 30, .18); font-size: 14px; overflow: hidden; }
+.panel-bar { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-bottom: 1px solid var(--line); font-family: var(--font-mono); font-size: 11px; color: var(--muted); }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); }
+.panel-bar .right { margin-left: auto; }
+.panel-body { padding: 12px 14px; display: grid; gap: 10px; }
+.heard { font-family: var(--font-mono); font-size: 12px; color: var(--muted); border-left: 2px solid var(--audio); padding-left: 8px; }
+.q { font-weight: 600; }
+.ans { margin: 0; padding-left: 18px; display: grid; gap: 4px; }
+.ans li::marker { color: var(--accent); }
+.ref { font-family: var(--font-mono); font-size: 11px; color: var(--accent); background: var(--accent-soft); border-radius: 4px; padding: 1px 5px; white-space: nowrap; }
+.keys { display: flex; flex-wrap: wrap; gap: 10px; font-family: var(--font-mono); font-size: 11px; color: var(--muted); border-top: 1px solid var(--line); padding: 8px 14px; }
+kbd { font-family: var(--font-mono); border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 4px; padding: 0 4px; color: var(--ink); background: var(--bg); }
+.status { display: inline-block; font-family: var(--font-mono); font-size: 11px; border-radius: 999px; padding: 2px 8px; background: var(--accent-soft); color: var(--accent); }
+@media (max-width: 640px) {
+  .panel { position: static; width: 100%; margin-top: 16px; }
+  .call { height: 140px; }
+}
+</style>
+</head>
+<body>
+<main>
+
+<header>
+  <p class="eyebrow">Murmury · architecture · prototype</p>
+  <h1>A copilot for live calls</h1>
+  <p class="lede">It listens to an online call on your Mac, notices when someone asks you a question, and shows a short answer taken only from the documents you chose, with the source of every line.</p>
+  <p><span class="status">Status: working prototype. Setup screen, audio capture, local transcription, question check, answers and the floating window work and are measured.</span></p>
+</header>
+
+<section>
+  <div class="prose">
+    <h2>Where each part runs</h2>
+    <p>Everything runs on your Mac except one step: the question and your documents go to Claude to write the answer. The call app is not touched, and the copilot does not join the meeting.</p>
+  </div>
+  <ul class="legend" aria-label="Legend">
+    <li><span class="sw audio"></span>audio</li>
+    <li><span class="sw app"></span>text inside the copilot</li>
+    <li><span class="sw cloud"></span>the only hop off the Mac</li>
+  </ul>
+  <figure>
+    <svg viewBox="0 0 940 470" role="img" aria-label="The other side's voice arrives over the internet into the call app; macOS sends it to your headphones and a digital copy to the copilot; your microphone goes to the call app and a copy to the copilot; the copilot transcribes locally, detects the question, asks Claude for the answer and shows it in a floating window." font-family="IBM Plex Sans, system-ui, sans-serif" font-size="13">
+      <defs>
+        <marker id="aAudio" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--audio)"/></marker>
+        <marker id="aApp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--accent)"/></marker>
+        <marker id="aCloud" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--cloud)"/></marker>
+      </defs>
+      <rect x="10" y="40" width="130" height="64" rx="8" fill="var(--surface)" stroke="currentColor"/>
+      <text x="75" y="68" text-anchor="middle" fill="currentColor" font-weight="600">Other people</text>
+      <text x="75" y="88" text-anchor="middle" fill="var(--muted)" font-size="12">on their computers</text>
+
+      <rect x="180" y="12" width="740" height="446" rx="12" fill="none" stroke="var(--muted)" stroke-dasharray="6 5"/>
+      <text x="198" y="34" fill="var(--muted)" font-family="IBM Plex Mono, monospace" font-size="12">YOUR MAC</text>
+
+      <rect x="210" y="48" width="150" height="56" rx="8" fill="var(--surface)" stroke="currentColor"/>
+      <text x="285" y="72" text-anchor="middle" fill="currentColor" font-weight="600">Zoom / Meet / Teams</text>
+      <text x="285" y="91" text-anchor="middle" fill="var(--muted)" font-size="12">unchanged</text>
+
+      <rect x="420" y="48" width="160" height="56" rx="8" fill="var(--audio-soft)" stroke="var(--audio)"/>
+      <text x="500" y="72" text-anchor="middle" fill="currentColor" font-weight="600">macOS audio</text>
+      <text x="500" y="91" text-anchor="middle" fill="var(--muted)" font-size="12">system output</text>
+
+      <rect x="650" y="48" width="140" height="56" rx="8" fill="var(--surface)" stroke="currentColor"/>
+      <text x="720" y="72" text-anchor="middle" fill="currentColor" font-weight="600">Headphones or speakers</text>
+      <text x="720" y="91" text-anchor="middle" fill="var(--muted)" font-size="12">you hear them</text>
+
+      <rect x="210" y="170" width="150" height="50" rx="8" fill="var(--surface)" stroke="currentColor"/>
+      <text x="285" y="200" text-anchor="middle" fill="currentColor" font-weight="600">Microphone</text>
+
+      <line x1="140" y1="72" x2="206" y2="72" stroke="var(--audio)" stroke-width="2" marker-end="url(#aAudio)"/>
+      <text x="173" y="62" text-anchor="middle" fill="var(--audio)" font-size="11">voice</text>
+      <line x1="360" y1="76" x2="416" y2="76" stroke="var(--audio)" stroke-width="2" marker-end="url(#aAudio)"/>
+      <line x1="580" y1="76" x2="646" y2="76" stroke="var(--audio)" stroke-width="2" marker-end="url(#aAudio)"/>
+      <line x1="285" y1="170" x2="285" y2="108" stroke="var(--audio)" stroke-width="2" marker-end="url(#aAudio)"/>
+      <text x="293" y="144" fill="var(--audio)" font-size="11">your voice</text>
+      <path d="M210,92 L150,92" stroke="var(--audio)" stroke-width="2" fill="none" marker-end="url(#aAudio)"/>
+
+      <rect x="210" y="262" width="690" height="180" rx="10" fill="var(--accent-soft)" stroke="var(--accent)"/>
+      <text x="228" y="284" fill="var(--accent)" font-family="IBM Plex Mono, monospace" font-size="12">MURMURY (installed on the Mac)</text>
+
+      <path d="M500,104 L500,318" stroke="var(--audio)" stroke-width="2" fill="none" marker-end="url(#aAudio)"/>
+      <text x="508" y="190" fill="var(--audio)" font-size="11">digital copy</text>
+      <text x="508" y="205" fill="var(--audio)" font-size="11">(ScreenCaptureKit)</text>
+      <path d="M285,220 L285,318" stroke="var(--audio)" stroke-width="2" fill="none" marker-end="url(#aAudio)"/>
+      <text x="293" y="250" fill="var(--audio)" font-size="11">copy</text>
+
+      <rect x="228" y="322" width="140" height="54" rx="7" fill="var(--surface)" stroke="var(--accent)"/>
+      <text x="298" y="345" text-anchor="middle" fill="currentColor" font-weight="600">Who speaks</text>
+      <text x="298" y="363" text-anchor="middle" fill="var(--muted)" font-size="12">you or them</text>
+
+      <rect x="420" y="322" width="140" height="54" rx="7" fill="var(--surface)" stroke="var(--accent)"/>
+      <text x="490" y="345" text-anchor="middle" fill="currentColor" font-weight="600">Transcription</text>
+      <text x="490" y="363" text-anchor="middle" fill="var(--muted)" font-size="12">Whisper, local</text>
+
+      <rect x="600" y="322" width="130" height="54" rx="7" fill="var(--surface)" stroke="var(--accent)"/>
+      <text x="665" y="345" text-anchor="middle" fill="currentColor" font-weight="600">A question?</text>
+      <text x="665" y="363" text-anchor="middle" fill="var(--muted)" font-size="12">their lines only</text>
+
+      <rect x="760" y="322" width="126" height="54" rx="7" fill="var(--surface)" stroke="var(--accent)"/>
+      <text x="823" y="345" text-anchor="middle" fill="currentColor" font-weight="600">Window</text>
+      <text x="823" y="363" text-anchor="middle" fill="var(--muted)" font-size="12">floating</text>
+
+      <line x1="368" y1="349" x2="416" y2="349" stroke="var(--accent)" stroke-width="2" marker-end="url(#aApp)"/>
+      <line x1="560" y1="349" x2="596" y2="349" stroke="var(--accent)" stroke-width="2" marker-end="url(#aApp)"/>
+
+      <rect x="420" y="394" width="310" height="36" rx="7" fill="var(--surface)" stroke="var(--line)"/>
+      <text x="575" y="417" text-anchor="middle" fill="currentColor" font-size="12">Your documents: PDF, Excel, notes (chosen before the call)</text>
+
+      <rect x="10" y="300" width="160" height="70" rx="8" fill="var(--cloud-soft)" stroke="var(--cloud)"/>
+      <text x="90" y="328" text-anchor="middle" fill="currentColor" font-weight="600">Claude (API)</text>
+      <text x="90" y="348" text-anchor="middle" fill="var(--muted)" font-size="12">Anthropic cloud</text>
+
+      <path d="M665,322 L665,300 L120,300" stroke="var(--cloud)" stroke-width="2" stroke-dasharray="6 4" fill="none" marker-end="url(#aCloud)"/>
+      <text x="400" y="294" text-anchor="middle" fill="var(--cloud)" font-size="11">question + documents (cached)</text>
+      <path d="M90,370 L90,452 L823,452 L823,380" stroke="var(--cloud)" stroke-width="2" stroke-dasharray="6 4" fill="none" marker-end="url(#aCloud)"/>
+      <text x="300" y="446" fill="var(--cloud)" font-size="11">answer, streamed as it is written</text>
+    </svg>
+    <figcaption>The other side's voice reaches your headphones as usual; the copilot reads a digital copy inside macOS, so headphones, AirPods and speakers all work. Audio never leaves the Mac: only the text of a question goes to Claude.</figcaption>
+  </figure>
+  <ul class="points">
+    <li><strong>What you install:</strong> a small Swift helper that captures audio, a Python app, and the Whisper speech model (about 1.6 GB, downloaded once). No audio driver, no change to the call app.</li>
+    <li><strong>macOS permission:</strong> on first run, "Screen &amp; System Audio Recording". The purple indicator in the menu bar is visible only to you.</li>
+    <li><strong>Who speaks:</strong> two separate streams, so only the other side's questions trigger an answer.</li>
+    <li><strong>Language:</strong> the speech model is multilingual, and the answer comes back in the language of the question.</li>
+  </ul>
+</section>
+
+<section>
+  <div class="prose">
+    <h2>From the end of a question to the answer</h2>
+    <p>The copilot cuts the audio at short pauses. When a sentence ends, it transcribes it on the Mac, checks whether it is a question for you, and streams the answer into the window. The times below were measured on a MacBook Pro with Apple Silicon.</p>
+  </div>
+  <figure>
+    <svg viewBox="0 0 940 250" role="img" aria-label="Timeline measured today: 0.7 seconds of end-of-speech wait, 0.75 seconds of local transcription, 0.5 seconds of question detection, then the first bullet after 0.85 to 2.5 seconds; about 3 to 4.5 seconds in total to the first bullet." font-family="IBM Plex Sans, system-ui, sans-serif" font-size="13">
+      <line x1="40" y1="200" x2="900" y2="200" stroke="var(--muted)"/>
+      <!-- scale: 1 s = 190 px, from x=40 -->
+      <g font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--muted)">
+        <line x1="40" y1="196" x2="40" y2="204" stroke="var(--muted)"/><text x="40" y="220" text-anchor="middle">0 s</text>
+        <line x1="230" y1="196" x2="230" y2="204" stroke="var(--muted)"/><text x="230" y="220" text-anchor="middle">1 s</text>
+        <line x1="420" y1="196" x2="420" y2="204" stroke="var(--muted)"/><text x="420" y="220" text-anchor="middle">2 s</text>
+        <line x1="610" y1="196" x2="610" y2="204" stroke="var(--muted)"/><text x="610" y="220" text-anchor="middle">3 s</text>
+        <line x1="800" y1="196" x2="800" y2="204" stroke="var(--muted)"/><text x="800" y="220" text-anchor="middle">4 s</text>
+      </g>
+      <text x="40" y="244" fill="var(--muted)" font-size="12">0 s = the person stops speaking</text>
+
+      <!-- today -->
+      <text x="40" y="34" fill="currentColor" font-weight="600">First version (measured)</text>
+      <rect x="40" y="46" width="133" height="34" fill="var(--audio-soft)" stroke="var(--audio)"/>
+      <text x="106" y="68" text-anchor="middle" fill="currentColor" font-size="12">wait 0.7</text>
+      <rect x="173" y="46" width="144" height="34" fill="var(--surface)" stroke="var(--accent)"/>
+      <text x="245" y="68" text-anchor="middle" fill="currentColor" font-size="12">transcribe 0.75</text>
+      <rect x="317" y="46" width="95" height="34" fill="var(--surface)" stroke="var(--accent)"/>
+      <text x="364" y="68" text-anchor="middle" fill="currentColor" font-size="12">question? 0.5</text>
+      <rect x="412" y="46" width="162" height="34" fill="var(--cloud-soft)" stroke="var(--cloud)"/>
+      <text x="493" y="68" text-anchor="middle" fill="currentColor" font-size="12">first bullet 0.85+</text>
+      <path d="M574,63 L888,63" stroke="var(--cloud)" stroke-dasharray="4 4"/>
+      <text x="580" y="98" fill="var(--muted)" font-size="12">first bullet at about 2.8 to 4.5 s; slow cases reach the dashed end</text>
+
+      <!-- now -->
+      <text x="40" y="132" fill="currentColor" font-weight="600">Now (measured end to end)</text>
+      <rect x="40" y="144" width="122" height="34" fill="var(--cloud-soft)" stroke="var(--cloud)"/>
+      <text x="101" y="166" text-anchor="middle" fill="currentColor" font-size="12">first text 0.64</text>
+      <rect x="162" y="144" width="30" height="34" fill="var(--cloud-soft)" stroke="var(--cloud)" stroke-dasharray="3 3"/>
+      <text x="205" y="166" fill="var(--muted)" font-size="12">0.64-0.80 s for a new question · 0.50 s for a prepared one · non-questions dropped at 0.24 s</text>
+    </svg>
+    <figcaption>Both lines are measured. The first version waited for the sentence, then transcribed, then checked, then answered. Now the speech is transcribed while the person is still speaking, the question check runs in parallel with the answer, and answers to expected questions can be prepared before the call; the text is usually ready the moment the person stops.</figcaption>
+  </figure>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Step</th><th>Measured</th><th>How</th></tr></thead>
+      <tbody>
+        <tr><td>Transcription of a finished utterance (8 s of speech)</td><td>0.73-0.77 s</td><td>mlx-whisper, whisper-large-v3-turbo, on the Mac</td></tr>
+        <tr><td>Question detection</td><td>0.49-0.50 s</td><td>Claude Haiku 4.5, 4 of 4 lines classified correctly</td></tr>
+        <tr><td>First answer text</td><td>0.85-2.5 s</td><td>Claude Sonnet 5.5, low effort, documents cached</td></tr>
+        <tr><td>All bullets</td><td>2.5-4.2 s</td><td>from the request</td></tr>
+        <tr><td><strong>End to end, new question: first text</strong></td><td><strong>0.64-0.80 s</strong></td><td>from the moment the audio finished playing, full answer at 2.1-2.4 s</td></tr>
+        <tr><td><strong>End to end, prepared answer</strong></td><td><strong>0.50 s</strong></td><td>answers to expected questions, written before the call</td></tr>
+        <tr><td>Question check accuracy</td><td>12 of 12, twice</td><td>7 requests (some without a question mark), 5 non-requests</td></tr>
+        <tr><td>Caching an 84k-token document set</td><td>1.4-2.9 s</td><td>once per call</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <div class="prose">
+    <h2>What you see during the call</h2>
+    <p>A small window, always on top of the others, that you move and resize. If you share your screen, the others do not see it.</p>
+  </div>
+  <div class="desk" aria-label="Example of the floating window over a call">
+    <div class="call">Zoom / Meet / Teams window<br>(the other participants on video)</div>
+    <div class="panel" role="group" aria-label="Copilot window, illustrative example">
+      <div class="panel-bar"><span class="dot"></span> Listening · nothing saved <span class="right">illustrative</span></div>
+      <div class="panel-body">
+        <div class="heard">them: «…and how sensitive is the plan to your main assumption?»</div>
+        <div class="q">How sensitive is the plan to the main assumption?</div>
+        <ul class="ans">
+          <li>The largest driver is sales productivity: at half the benchmark, year-5 profit falls by more than half <span class="ref">§9.7</span></li>
+          <li>A response is set in advance and triggers on a measured threshold <span class="ref">§9.5</span></li>
+          <li>Every other single driver moves the result less <span class="ref">Table 36</span></li>
+        </ul>
+      </div>
+      <div class="keys"><span><kbd>⌥</kbd><kbd>Space</kbd> ask manually</span><span><kbd>⌥</kbd><kbd>P</kbd> pin</span><span><kbd>⌥</kbd><kbd>K</kbd> clear</span></div>
+    </div>
+  </div>
+  <p class="note">The example is illustrative. In use, every line comes from the documents you load, with the exact figures and references they contain.</p>
+</section>
+
+<section>
+  <h2>What the others see</h2>
+  <div class="grid2">
+    <div class="card">
+      <h3>In the call</h3>
+      <ul class="points">
+        <li>No "Recording" badge: the call app's recording is not used.</li>
+        <li>No extra participant: the copilot does not join the meeting.</li>
+        <li>Your voice and audio work as always.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>If you share your screen</h3>
+      <ul class="points">
+        <li>The copilot window is excluded from screen sharing: you see it, they do not.</li>
+        <li>It can also sit on a second monitor.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Rules of use</h2>
+  <div class="grid2">
+    <div class="card">
+      <h3>Privacy and consent</h3>
+      <ul class="points">
+        <li>Nothing is saved by default: transcript and answers disappear on exit.</li>
+        <li>Tell the others at the start that an assistant takes notes. In the EU and in Switzerland, transcribing someone's voice without telling them is a legal risk.</li>
+        <li>Audio stays on the Mac; Claude receives only the text of the question and your documents.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>When not to use it</h3>
+      <ul class="points">
+        <li>In exams or assessed presentations.</li>
+        <li>When a fact is not in the documents: the window says "Not in the material" instead of guessing.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Choice of models and cost</h2>
+  <div class="grid2">
+    <div class="card">
+      <p class="tag">question detection</p>
+      <p>Claude Haiku 4.5: the fastest and cheapest. It reads one line at a time, a fraction of a cent per check.</p>
+    </div>
+    <div class="card">
+      <p class="tag">answers</p>
+      <p>Claude Sonnet 5.5 at low effort, thinking off. In testing it kept the 3-line format, cited sources and invented nothing; Claude Haiku 4.5 broke the format and once invented figures.</p>
+    </div>
+    <div class="card">
+      <p class="tag">cost, 84k-token documents</p>
+      <p>About $0.43 to cache the documents for an hour, then about $0.024 per question: under $1 for an hour with 20 questions.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Next steps</h2>
+  <div class="grid2">
+    <div class="card">
+      <p class="tag">1 · verify in a real share</p>
+      <p>The window was absent from a full-screen screenshot; confirm it in a live Zoom or Teams screen share.</p>
+    </div>
+    <div class="card">
+      <p class="tag">2 · global shortcuts</p>
+      <p>Today the shortcuts work when the window has focus; make them work from the call app too.</p>
+    </div>
+    <div class="card">
+      <p class="tag">3 · prepared answers</p>
+      <p>Matching a question to a prepared answer is not yet stable; live answers are already under a second.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+</body>
+</html>

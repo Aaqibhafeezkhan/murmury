@@ -1,0 +1,23 @@
+# build output and local environment
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+audiotap/audiotap
+dist/
+build/
+*.dmg
+packaging/*.iconset/
+packaging/icon-preview.png
+.env
+.wrangler/
+
+# private: never published
+CLAUDE.md
+.claude/
+evals/local/
+evals/results/
+scripts/cf
+site/
+docs/content/
+docs/launch-plan.md

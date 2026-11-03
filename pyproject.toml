@@ -1,0 +1,26 @@
+[project]
+name = "murmury"
+version = "0.1.0"
+description = "Listens to an online call on this Mac and answers the other side's questions from chosen material (ADR-013)"
+requires-python = ">=3.12"
+dependencies = [
+    "numpy>=2",
+    "mlx-whisper>=0.4",
+    "anthropic>=1",
+    "pypdf>=5",
+    "openpyxl>=3.1",
+    "PySide6>=6.8",
+    "pyobjc-framework-Cocoa>=11",
+    "keyring>=25.7.0",
+    "openai>=3.26.1",
+]
+
+[tool.uv]
+package = false
+
+[dependency-groups]
+dev = [
+    "pyinstaller>=6.22.3",
+    "pyobjc-framework-quartz>=12.2.2",
+    "pyobjc-framework-vision>=12.2.2",
+]

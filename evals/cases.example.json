@@ -1,0 +1,12 @@
+{
+ "situation": "a sales call with a prospective customer",
+ "docs": ["/path/to/product-spec.pdf", "/path/to/pricing.xlsx"],
+ "pages": "1-10",
+ "keywords": ["pricing", "security"],
+ "banned": ["internal-codename"],
+ "conversations": [
+  [{"q": "How much does it cost for 50 users?", "expect": "the price for 50 users with the billing period"},
+   {"q": "And is support included?", "expect": "what support the price includes"}],
+  [{"q": "Where is our data stored?", "expect": "the hosting region from the spec, or says it is not there"}]
+ ]
+}
