@@ -1295,4 +1295,3 @@ def save_style(settings: QSettings, style: Style) -> None:
     for key in STYLE_KEYS:
         value = getattr(style, key)
         settings.setValue(f"style/{key}", str(value).lower() if isinstance(value, bool) else value)
-

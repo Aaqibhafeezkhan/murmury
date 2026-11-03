@@ -207,4 +207,3 @@ def load(paths: list[Path]) -> list[Source]:
 def as_prompt(sources: list[Source]) -> str:
     """One stable block of text: same files in, same bytes out, so the prompt cache holds."""
     return "\n\n".join(f'<source name="{s.name}" kind="{s.kind}">\n{s.text}\n</source>' for s in sources)
-

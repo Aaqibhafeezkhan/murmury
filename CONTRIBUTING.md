@@ -45,6 +45,6 @@ recording permission, which is how the app hears the call's audio.
 - Try Murmury with a service other than Anthropic (OpenAI, Gemini, Grok, Groq, Mistral, OpenRouter) and
   report what works and what breaks.
 - Add a local-model provider (Ollama or LM Studio) in `copilot/providers.py`.
-- Improve how documents are read in `copilot/material.py` (Word, PowerPoint, Keynote).
+- Read more document types in `copilot/material.py` (Keynote, Pages, Google Docs exports).
 
 By contributing you agree that your work is released under the [GPL-3.0](LICENSE) licence.

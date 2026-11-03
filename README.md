@@ -257,5 +257,3 @@ instructions in `copilot/answer.py` and measure the change with `evals/run.py` o
 ## License
 
 GPL-3.0: use it, change it, share it; any version you distribute stays open source. See [LICENSE](LICENSE).
-
-
