@@ -1,0 +1,34 @@
+name: Bug report
+description: Something did not work as expected
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you did, what you expected, what you saw instead.
+    validations:
+      required: true
+  - type: input
+    id: macos
+    attributes:
+      label: Mac and macOS version
+      placeholder: MacBook Air M2, macOS 26.1
+    validations:
+      required: true
+  - type: dropdown
+    id: service
+    attributes:
+      label: AI service
+      options: [Anthropic, OpenAI, Gemini, xAI, Groq, Mistral, OpenRouter, Not related]
+  - type: input
+    id: call
+    attributes:
+      label: Call app
+      placeholder: Zoom, Meet in Chrome, Teams...
+  - type: textarea
+    id: logs
+    attributes:
+      label: Terminal output
+      description: If you run it from source, paste the last lines. Remove anything private first.
+      render: text

@@ -1,0 +1,17 @@
+name: Idea
+description: Something Murmury should do
+labels: [enhancement]
+body:
+  - type: textarea
+    id: call
+    attributes:
+      label: The call
+      description: What kind of call, and the moment where Murmury could help.
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: What it should do
+    validations:
+      required: true

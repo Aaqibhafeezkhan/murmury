@@ -8,7 +8,7 @@
   <a href="https://murmury.pages.dev"><img src="https://img.shields.io/badge/site-murmury.pages.dev-1fa463" alt="Website"></a>
 </p>
 
-# Murmury
+# Murmury: the open-source Cluely alternative for Mac
 
 **A small elf for big calls.** Murmury listens to the other side of your Zoom, Meet or Teams call on your
 Mac, notices when someone asks you something, and whispers a short answer from your own documents in a
@@ -24,7 +24,7 @@ small floating window that screen sharing does not capture.
 - **Private by design:** speech is transcribed on your Mac (Whisper on Apple Silicon), nothing is saved,
   no bot joins the call.
 - **Invisible on screen share:** measured, not promised: run `scripts/check_hidden.py` on your own Mac.
-- **Free and open source** (GPL-3.0). Contributions welcome.
+- **Free and open source** (GPL-3.0). Contributions welcome. If the elf helps you, a ⭐ helps the elf.
 
 Requires a Mac with Apple Silicon (M1 or newer) and macOS 13 or later.
 
@@ -40,26 +40,17 @@ before a customer demo, a contract before a negotiation. Diagrams and the full w
 
 ## How it works
 
-```
-other people's voice ─▶ call app ─▶ macOS audio output ─▶ your headphones or speakers
-                                          │
-                                          └─▶ audiotap (digital copy) ─▶ cut into utterances
-your microphone ─▶ call app                                   │
-       └─▶ audiotap (copy, "who is speaking")                 ▼
-                                               local transcription (Whisper on the Mac)
-                                                              │
-                                               "is this a question for me?"  (fast model)
-                                                              │
-                                               answer from your documents   (your AI service)
-                                                              │
-                                               floating window: 2-3 bullets with sources
-```
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/arch-dark.png">
+  <img src="docs/assets/arch-light.png" alt="Architecture: audiotap captures the Mac's audio output with ScreenCaptureKit as 16 kHz float32 PCM; listen.py cuts it into utterances and transcribes them with mlx-whisper on the Apple GPU; pipeline.py runs a fast question check and the answer stream in parallel, sending only the line and the documents over HTTPS to the AI service you chose; app.py shows the answer in a window excluded from screen capture." width="100%">
+</picture>
 
 - **No bot joins the meeting.** Audio is read inside macOS with ScreenCaptureKit, so nothing
   appears in the call: no "Recording" badge, no extra participant.
 - **Headphones or speakers both work.** The other side's audio is captured digitally before it
   reaches your output device.
-- **Only their questions trigger an answer.** Your microphone is a separate stream.
+- **Only their questions trigger an answer.** The live loop listens to the Mac's audio output; your
+  microphone never starts an answer.
 - **Audio never leaves the Mac.** Transcription runs locally; only the text of a question goes to
   the model, together with your documents.
 - **Answers come from your documents only.** Every bullet names its source (section, table, sheet
@@ -219,6 +210,11 @@ Anyway". Signing and notarizing with a Developer ID (Apple Developer Program) re
 
 ## Privacy and use
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/share-dark.png">
+  <img src="docs/assets/share-light.png" alt="Your screen shows the slides and the Murmury window; what the others see on Zoom, Meet or Teams shows only the slides. Measured: 0 pixels of the window in ScreenCaptureKit, screencapture and CGWindowListCreateImage." width="100%">
+</picture>
+
 - Nothing is saved: transcripts and answers live in memory and disappear on exit. Saved calls keep only
   names, document locations and settings.
 - Audio never leaves the Mac. Only the text of a question goes to the AI service you chose, with your
@@ -248,7 +244,8 @@ again after each macOS update.
 
 ## Contributing
 
-Issues and pull requests are welcome. Good first steps: try it with a service other than Anthropic and
+Issues and pull requests are welcome; [CONTRIBUTING.md](CONTRIBUTING.md) has the setup and the map of the
+code. Good first steps: try it with a service other than Anthropic and
 report what breaks, add a local-model provider in `copilot/providers.py`, or improve the answer
 instructions in `copilot/answer.py` and measure the change with `evals/run.py` on your own cases
 (`evals/cases.example.json` shows the format).
