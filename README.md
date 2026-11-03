@@ -28,6 +28,10 @@ small floating window that screen sharing does not capture.
 
 Requires a Mac with Apple Silicon (M1 or newer) and macOS 13 or later.
 
+**Download:** [Murmury.dmg](https://github.com/GianlucaBave/murmury/releases/latest), drag it to
+Applications. The build is not notarized yet, so the first time macOS blocks it: System Settings,
+Privacy & Security, "Open Anyway". Or run it from source:
+
 ```bash
 git clone https://github.com/GianlucaBave/murmury && cd murmury
 swiftc -O audiotap/main.swift -o audiotap/audiotap -framework ScreenCaptureKit -framework AVFoundation -framework CoreMedia
