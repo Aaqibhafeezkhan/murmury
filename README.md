@@ -15,8 +15,8 @@ Mac, notices when someone asks you something, and whispers a short answer from y
 small floating window that screen sharing does not capture.
 
 <p align="center">
-  <img src="docs/assets/meeting.webp" alt="A video call where the other side asks why SMB is below plan; the Murmury window answers with two facts and their sources, while the shared screen shows only the slides." width="100%">
-  <br><sub>They ask. You see the answer and its source. Your shared screen shows only your slides.</sub>
+  <img src="docs/assets/demo.gif" alt="A real recording: a voice asks how long the runway is; within about a second the Murmury window answers that there are about 15 months of runway, with three facts each citing q3-review.md." width="720">
+  <br><sub>A real recording: the question comes through the speakers, the answer streams from <a href="docs/demo/q3-review.md"><code>docs/demo/q3-review.md</code></a>.<br>Recorded with <code>--show-in-screenshots</code>: without it, the window doesn't appear in recordings at all.</sub>
 </p>
 
 - **Your documents, your AI:** PDF, Excel, Word, PowerPoint and notes; answers come from your own API key for Claude, OpenAI,
@@ -37,6 +37,10 @@ git clone https://github.com/GianlucaBave/murmury && cd murmury
 swiftc -O audiotap/main.swift -o audiotap/audiotap -framework ScreenCaptureKit -framework AVFoundation -framework CoreMedia
 uv run python -m copilot.app
 ```
+
+**Try it without a call:** start Murmury with [`docs/demo/q3-review.md`](docs/demo/q3-review.md) as the
+document, press Start Listening, then run `zsh docs/demo/ask.sh`: a voice asks three questions through your
+speakers, the way the other side of a call would.
 
 It works with any call app and any material: a business plan before an investor call, a product spec
 before a customer demo, a contract before a negotiation. Diagrams and the full walkthrough:
