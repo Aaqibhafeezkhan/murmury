@@ -1068,6 +1068,7 @@ class SetupDialog(QDialog):
         # measured 8 October 2026 on a 70-page plan: first text 0.64-0.80 s with Claude Sonnet by API
         self.backend_hint = "~0.8 s with Claude Sonnet" if anthropic else p.free
         self.key_field.setPlaceholderText(f"Paste your {p.name.split(' ·')[0]} key ({p.key_hint})")
+        self.key_field.setVisible(p.key_required)
         self.prepare_on.setEnabled(anthropic)
         self.prepare_n.setEnabled(anthropic and self.prepare_on.isChecked())
         self.prepare_on.setToolTip("Takes about 30 seconds and costs about $0.5 for 20 questions (estimate)."
@@ -1098,19 +1099,20 @@ class SetupDialog(QDialog):
         self.refresh()
 
     def check_connection(self) -> None:
-        """No key: ask for one. A key: list the service's models in the background (free), which also proves it works."""
+        """Check the provider and load its models in the background; local servers do not need a key."""
         import threading
         p = providers.provider(self.provider_id())
         key, source = providers.api_key(p.id)
-        if not key:
+        if p.key_required and not key:
             self.model.clear()  # no key, no models: never show a list the key cannot back
             self.model.setPlaceholderText("Add your key to see the models")
             self.set_connection("", None, [("Save", self.save_key),
                                            ("Get a key", lambda: QDesktopServices.openUrl(QUrl(p.key_url)))],
                                 key_field=True)
             return
-        self.model.setPlaceholderText("Loading the models…")
-        self.set_connection(f"Checking your {p.name.split(' ·')[0]} key…", None)
+        self.model.setPlaceholderText("Loading local models…" if not p.key_required else "Loading the models…")
+        self.set_connection(f"Checking {p.name.split(' ·')[0]}…" if not p.key_required else
+                            f"Checking your {p.name.split(' ·')[0]} key…", None)
 
         def run() -> None:
             try:
@@ -1125,10 +1127,14 @@ class SetupDialog(QDialog):
     def show_check(self, provider_id: str, result: dict) -> None:
         if provider_id != self.provider_id():
             return  # the choice changed while checking
-        name = providers.provider(provider_id).name.split(" ·")[0]
+        service = providers.provider(provider_id)
+        name = service.name.split(" ·")[0]
         if not result.get("ok"):
-            self.model.setPlaceholderText("Fix the key to see the models")
-            self.set_connection(f"{name} key rejected: {result.get('error', '')[:60]}", False,
+            self.model.setPlaceholderText("Start the local server to see its models" if not service.key_required
+                                          else "Fix the key to see the models")
+            message = (f"{name} is unavailable: {result.get('error', '')[:60]}" if not service.key_required
+                       else f"{name} key rejected: {result.get('error', '')[:60]}")
+            self.set_connection(message, False,
                                 [("Change", self.remove_key)] if result.get("keychain") else [])
             return
         models, suggested = result.get("models", []), result.get("suggested")
@@ -1140,17 +1146,21 @@ class SetupDialog(QDialog):
         self.model.setCurrentIndex(max(self.model.findData(saved if saved in models else suggested), 0))
         self.model.blockSignals(False)
         if not models:
-            self.set_connection(f"{name} key works, but it has no chat models", False,
+            message = f"{name} is available, but it has no chat models" if not service.key_required else f"{name} key works, but it has no chat models"
+            self.set_connection(message, False,
                                 [("Change", self.remove_key)] if result.get("keychain") else [])
             return
-        self.set_connection(f"{name} key works · {len(models)} model{'s' if len(models) != 1 else ''}", True,
+        status = f"{name} available" if not service.key_required else f"{name} key works"
+        self.set_connection(f"{status} · {len(models)} model{'s' if len(models) != 1 else ''}", True,
                             [("Remove", self.remove_key)] if result.get("keychain") else [])
 
     def save_key(self) -> None:
+        p = providers.provider(self.provider_id())
+        if not p.key_required:
+            return
         key = self.key_field.text().strip()
         if not key:
             return
-        p = providers.provider(self.provider_id())
         if (p.id == "anthropic") != key.startswith("sk-ant-"):  # an Anthropic key in the wrong place, or the reverse
             self.set_connection("That looks like an Anthropic key: choose Anthropic above" if p.id != "anthropic"
                                 else "That is not an Anthropic key (they start with sk-ant-)", False,
