@@ -385,6 +385,14 @@ def start(copilot_ready: threading.Event, holder: dict, bridge: Bridge, args) ->
         bridge.status.emit(f"{usage.cache_write + usage.cache_read:,} tokens cached{cost}")
     else:
         bridge.status.emit(f"Ready · {args.model}")
+        read = usage.input + usage.cache_read
+        # a local server keeps only what fits its context length and cuts the rest without saying so
+        # (measured: 2,051 of ~27,000 tokens at Ollama's default); documents run 2-4 characters a token
+        if not service.key_required and 0 < read < len(copilot.system) / 6:
+            name, card = service.name.split(" ·")[0], new_card()
+            bridge.card.emit(card, f"{name} cut your documents")
+            bridge.answer.emit(card, f"Only the last {read:,} tokens reached the model, so answers will miss most "
+                                     f"of them. Raise the context length in {name} and start again.")
     if args.prepare and isinstance(copilot, PreparedCopilot):
         bridge.status.emit(f"Preparing answers to {args.prepare} expected questions…")
         copilot.prepare(copilot.expected_questions(args.prepare))

@@ -87,7 +87,12 @@ before a customer demo, a contract before a negotiation. Diagrams and the full w
 - An API key for one AI service, chosen on the setup screen (`copilot/providers.py`): Anthropic, OpenAI,
   Google Gemini, xAI, Groq, Mistral or OpenRouter. No key for a local model: start Ollama
   (`localhost:11434`) or LM Studio's server (`localhost:1234`) and give the model a long context length,
-  or long documents are cut. The **Connection** row stores it in the macOS Keychain
+  or long documents are cut (Murmury warns you when that happens). Measured on an M5 with 24 GB, Ollama
+  0.40.14, a 27,000-token document and a 32k context: `gemma3:12b` (8.2 GB) and `qwen3:8b` (5.2 GB) showed
+  the first text 0.3-0.5 s after the question and the full answer in 4-10 s; reading the documents the first
+  time took 89-99 s. `gemma3:12b` gave the most faithful answers; `llama3.2:3b` was fast but made up
+  numbers. Speech recognition downloads its model (1.5 GB) on the first run; after that everything works
+  offline. The **Connection** row stores it in the macOS Keychain
   (or reads `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, `GEMINI_API_KEY`, `XAI_API_KEY`, `GROQ_API_KEY`,
   `MISTRAL_API_KEY`, `OPENROUTER_API_KEY`), lists the service's models with a free call and preselects the
   suggested one (`models.json` on the site, read once a day, with built-in patterns as fallback). Anthropic

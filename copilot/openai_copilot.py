@@ -29,6 +29,8 @@ def _reasoning(provider_id: str, model: str) -> dict:
         return {"reasoning_effort": "low"}
     if provider_id == "gemini" and re.match(r"gemini-(2\.5|[3-9])", name):
         return {"reasoning_effort": "none" if "flash" in name else "low"}
+    if provider_id == "ollama":  # measured 4 Nov 2026: qwen3:8b first text 15 s thinking, 0.23 s with "none"
+        return {"reasoning_effort": "none"}
     return {}
 
 
@@ -40,7 +42,8 @@ class OpenAICopilot:
                  style: Style | None = None):
         from openai import OpenAI
         self.provider = provider
-        self.client = OpenAI(api_key=key, base_url=provider.base_url, timeout=60)
+        # a local model reads the documents slowly the first time: 89 s for 27k tokens (gemma3:12b, M5, 4 Nov 2026)
+        self.client = OpenAI(api_key=key, base_url=provider.base_url, timeout=60 if provider.key_required else 600)
         self.style = style or Style()
         self.model = model
         self.system = instructions(situation, self.style) + "\n" + GATE + "\n\n" + material
