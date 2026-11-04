@@ -1,4 +1,5 @@
-"""Answers through any service that speaks the OpenAI chat format: OpenAI, Gemini, xAI, Groq, Mistral, OpenRouter.
+"""Answers through any service that speaks the OpenAI chat format: OpenAI, Gemini, xAI, Groq, Mistral, OpenRouter,
+and models running on this Mac through Ollama or LM Studio.
 
 One call per line: the answer itself says SKIP when the line is not a question (no separate check), and the
 documents sit at the start of the system message so services with automatic prompt caching reuse them.

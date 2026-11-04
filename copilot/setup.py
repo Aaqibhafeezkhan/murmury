@@ -619,7 +619,8 @@ class SetupDialog(QDialog):
         self.provider = QComboBox()
         for p in providers.PROVIDERS:
             self.provider.addItem(p.name, p.id)
-        self.provider.setToolTip("Answers come from your own account with this service, billed by them")
+        self.provider.setToolTip("Answers come from your own account with this service, billed by them, "
+                                 "or from a model running on your Mac (Ollama, LM Studio)")
         self.provider.currentIndexChanged.connect(lambda _: self.provider_changed())
         self.backend_hint = ""
         call.add("AI service", self.provider)
@@ -1068,7 +1069,6 @@ class SetupDialog(QDialog):
         # measured 8 October 2026 on a 70-page plan: first text 0.64-0.80 s with Claude Sonnet by API
         self.backend_hint = "~0.8 s with Claude Sonnet" if anthropic else p.free
         self.key_field.setPlaceholderText(f"Paste your {p.name.split(' ·')[0]} key ({p.key_hint})")
-        self.key_field.setVisible(p.key_required)
         self.prepare_on.setEnabled(anthropic)
         self.prepare_n.setEnabled(anthropic and self.prepare_on.isChecked())
         self.prepare_on.setToolTip("Takes about 30 seconds and costs about $0.5 for 20 questions (estimate)."
@@ -1132,7 +1132,7 @@ class SetupDialog(QDialog):
         if not result.get("ok"):
             self.model.setPlaceholderText("Start the local server to see its models" if not service.key_required
                                           else "Fix the key to see the models")
-            message = (f"{name} is unavailable: {result.get('error', '')[:60]}" if not service.key_required
+            message = (f"{name} did not answer: is it running? ({result.get('error', '')[:60]})" if not service.key_required
                        else f"{name} key rejected: {result.get('error', '')[:60]}")
             self.set_connection(message, False,
                                 [("Change", self.remove_key)] if result.get("keychain") else [])
@@ -1146,7 +1146,8 @@ class SetupDialog(QDialog):
         self.model.setCurrentIndex(max(self.model.findData(saved if saved in models else suggested), 0))
         self.model.blockSignals(False)
         if not models:
-            message = f"{name} is available, but it has no chat models" if not service.key_required else f"{name} key works, but it has no chat models"
+            message = (f"{name} is available, but it has no chat models" if not service.key_required
+                       else f"{name} key works, but it has no chat models")
             self.set_connection(message, False,
                                 [("Change", self.remove_key)] if result.get("keychain") else [])
             return

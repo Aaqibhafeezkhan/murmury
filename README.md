@@ -20,7 +20,8 @@ small floating window that screen sharing does not capture.
 </p>
 
 - **Your documents, your AI:** PDF, Excel, Word, PowerPoint and notes; answers come from your own API key for Claude, OpenAI,
-  Gemini, Grok (xAI), Groq, Mistral or OpenRouter. Gemini, Groq and OpenRouter have free tiers.
+  Gemini, Grok (xAI), Groq, Mistral or OpenRouter, or from a model on your Mac through Ollama or LM Studio.
+  Gemini, Groq and OpenRouter have free tiers; local models cost nothing and keep everything on the Mac.
 - **Private by design:** speech is transcribed on your Mac (Whisper on Apple Silicon), nothing is saved,
   no bot joins the call.
 - **Invisible on screen share:** measured, not promised: run `scripts/check_hidden.py` on your own Mac.
@@ -84,7 +85,9 @@ before a customer demo, a contract before a negotiation. Diagrams and the full w
 - Xcode command line tools (`swiftc`)
 - [uv](https://docs.astral.sh/uv/)
 - An API key for one AI service, chosen on the setup screen (`copilot/providers.py`): Anthropic, OpenAI,
-  Google Gemini, xAI, Groq, Mistral or OpenRouter. The **Connection** row stores it in the macOS Keychain
+  Google Gemini, xAI, Groq, Mistral or OpenRouter. No key for a local model: start Ollama
+  (`localhost:11434`) or LM Studio's server (`localhost:1234`) and give the model a long context length,
+  or long documents are cut. The **Connection** row stores it in the macOS Keychain
   (or reads `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, `GEMINI_API_KEY`, `XAI_API_KEY`, `GROQ_API_KEY`,
   `MISTRAL_API_KEY`, `OPENROUTER_API_KEY`), lists the service's models with a free call and preselects the
   suggested one (`models.json` on the site, read once a day, with built-in patterns as fallback). Anthropic
@@ -227,6 +230,7 @@ Anyway". Signing and notarizing with a Developer ID (Apple Developer Program) re
   names, document locations and settings.
 - Audio never leaves the Mac. Only the text of a question goes to the AI service you chose, with your
   documents, on your own account. Free tiers (Gemini, OpenRouter's free models) may use it for training.
+  With Ollama or LM Studio nothing leaves the Mac at all.
 - Tell the other participants that an assistant takes notes where the law asks for it. In the EU and in
   Switzerland, transcribing someone's voice without telling them is a legal risk.
 - Do not use it in exams, tests or job interviews.
@@ -246,7 +250,6 @@ again after each macOS update.
 
 The full list, with what is done, is in [issue #10](https://github.com/GianlucaBave/murmury/issues/10).
 
-- Local models through Ollama or LM Studio (OpenAI-format, so mostly configuration), fully offline.
 - Answers in your voice: a few things you wrote or said teach Murmury your phrasing, tone and length.
 - Your own model: a small model fine-tuned on your Mac (MLX, LoRA) on the answers you choose to keep.
 - Global shortcuts (today they work when the window has focus).

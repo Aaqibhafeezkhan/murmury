@@ -32,11 +32,15 @@ class Provider:
     prefer: tuple[str, ...] = ()         # fallback suggestion: patterns, best first
     hide: tuple[str, ...] = ()           # models that cannot write a chat answer
     options: dict = field(default_factory=dict)  # extra request fields this service accepts
-    key_required: bool = True
+    key_required: bool = True            # False: a server on this Mac (Ollama, LM Studio), no key
 
 
 COMMON_HIDE = (r"embed", r"whisper", r"tts", r"transcribe", r"audio", r"realtime", r"image", r"dall-e",
                r"moderation", r"guard", r"rerank", r"ocr", r"search", r"vision", r"imagen", r"veo", r"live")
+
+# local servers often start with a short context: documents longer than it are cut without a warning
+LOCAL_HINT = "runs on your Mac: set a long context length in it so your documents fit"
+LOCAL_PREFER = (r"llama", r"qwen", r"mistral", r"gemma")
 
 PROVIDERS: list[Provider] = [
     Provider("anthropic", "Anthropic · Claude", None, "sk-ant-…", "https://console.anthropic.com/settings/keys",
@@ -46,10 +50,6 @@ PROVIDERS: list[Provider] = [
              env=("OPENAI_API_KEY",), prefer=(r"gpt-\d+(\.\d+)?-mini$", r"gpt-\d+(\.\d+)?$"),
              hide=COMMON_HIDE + (r"^o\d", r"codex", r"instruct", r"babbage", r"davinci", r"gpt-3"),
              options={"prompt_cache_key": "murmury"}),
-    Provider("ollama", "Ollama · local", "http://localhost:11434/v1", "No key required", "",
-             key_required=False, prefer=(r"llama", r"qwen", r"mistral", r"gemma"), hide=COMMON_HIDE),
-    Provider("lm-studio", "LM Studio · local", "http://localhost:1234/v1", "No key required", "",
-             key_required=False, prefer=(r"llama", r"qwen", r"mistral", r"gemma"), hide=COMMON_HIDE),
     Provider("gemini", "Google · Gemini", "https://generativelanguage.googleapis.com/v1beta/openai/", "AIza…",
              "https://aistudio.google.com/apikey", env=("GEMINI_API_KEY", "GOOGLE_API_KEY"),
              free="free tier: Google may use what you send to improve its products",
@@ -69,6 +69,10 @@ PROVIDERS: list[Provider] = [
              free="models ending in :free cost nothing, are rate-limited, and their hosts may log what you send",
              prefer=(r"^anthropic/claude-sonnet", r"^openai/gpt-[\d.]+-mini$", r"^google/gemini-[\d.]+-flash$", r":free$"),
              hide=COMMON_HIDE),
+    Provider("ollama", "Ollama · local", "http://localhost:11434/v1", "No key required", "",
+             key_required=False, free=LOCAL_HINT, prefer=LOCAL_PREFER, hide=COMMON_HIDE),
+    Provider("lm-studio", "LM Studio · local", "http://localhost:1234/v1", "No key required", "",
+             key_required=False, free=LOCAL_HINT, prefer=LOCAL_PREFER, hide=COMMON_HIDE),
 ]
 BY_ID = {p.id: p for p in PROVIDERS}
 DEFAULT = "anthropic"
