@@ -48,7 +48,5 @@ recording permission, which is how the app hears the call's audio.
 
 ## Contributor License Agreement
 
-Before a pull request can be merged, you sign the [Contributor License Agreement](docs/CLA.md) once with your
-GitHub account: CLA Assistant posts the link on your first pull request. You keep the copyright of your work.
-The agreement lets the maintainer release your contribution under GPL-3.0 and also under other licences,
-including commercial ones. Code already released under GPL-3.0 stays GPL-3.0 for everyone who has it.
+On your first pull request, CLA Assistant asks you to sign a short [agreement](docs/CLA.md) with one click.
+You keep the copyright of your work; the agreement also lets the project use it under other licences.
