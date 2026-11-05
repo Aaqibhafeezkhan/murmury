@@ -15,10 +15,10 @@ from dataclasses import asdict, dataclass, field
 from uuid import uuid4
 from pathlib import Path
 
-from PySide6.QtCore import QByteArray, QEvent, QPoint, QRect, QRectF, QSettings, QSize, Qt, QTimer, QUrl, Signal
-from PySide6.QtGui import QColor, QDesktopServices, QGuiApplication, QPainter, QPainterPath, QPixmap
+from PySide6.QtCore import QByteArray, QPoint, QRect, QRectF, QSettings, QSize, Qt, QTimer, QUrl, Signal
+from PySide6.QtGui import QColor, QDesktopServices, QGuiApplication, QPainter, QPixmap
 from PySide6.QtSvg import QSvgRenderer
-from PySide6.QtWidgets import (QAbstractButton, QButtonGroup, QComboBox, QDialog, QFileDialog, QFrame, QInputDialog,
+from PySide6.QtWidgets import (QAbstractButton, QButtonGroup, QComboBox, QDialog, QFileDialog, QFrame,
                                QHBoxLayout, QLabel, QLayout, QLineEdit, QPlainTextEdit, QPushButton, QScrollArea,
                                QSlider, QSpinBox, QStackedWidget, QVBoxLayout, QWidget)
 
