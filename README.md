@@ -168,7 +168,7 @@ uv run python -m copilot.app
   0.40.14, a 27,000-token document and a 32k context: `gemma3:12b` (8.2 GB) and `qwen3:8b` (5.2 GB) showed
   the first text 0.3-0.5 s after the question and the full answer in 4-10 s; reading the documents the first
   time took 89-99 s. `gemma3:12b` gave the most faithful answers; `llama3.2:3b` was fast but made up
-  numbers. Speech recognition downloads its model (1.5 GB) on the first run; after that everything works
+  numbers. Speech recognition downloads its model (about 1.6 GB) on the first run; after that everything works
   offline. The **Connection** row stores it in the macOS Keychain
   (or reads `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, `GEMINI_API_KEY`, `XAI_API_KEY`, `GROQ_API_KEY`,
   `MISTRAL_API_KEY`, `OPENROUTER_API_KEY`), lists the service's models with a free call and preselects the
