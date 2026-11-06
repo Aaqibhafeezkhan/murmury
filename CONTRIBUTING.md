@@ -40,11 +40,31 @@ recording permission, which is how the app hears the call's audio.
 - If you touch the floating window, run `uv run python scripts/check_hidden.py` and say what it printed.
 - Never commit API keys, your own documents or call transcripts.
 
-## Good first contributions
+## Where to start
 
-- Try Murmury with a service other than Anthropic (OpenAI, Gemini, Grok, Groq, Mistral, OpenRouter, Ollama,
-  LM Studio) and report what works and what breaks.
-- Read more document types in `copilot/material.py` (Keynote, Pages, Google Docs exports).
+- Issues labelled [good first issue](https://github.com/GianlucaBave/murmury/issues?q=is%3Aopen+label%3A%22good+first+issue%22)
+  are small and say what "done" looks like. `level 1`, `level 2` and `level 3` tell you the size: small,
+  moderate, substantial.
+- No code needed: try Murmury with a service other than Anthropic (OpenAI, Gemini, Grok, Groq, Mistral,
+  OpenRouter, Ollama, LM Studio) and report what works and what breaks in
+  [#3](https://github.com/GianlucaBave/murmury/issues/3).
+- Have an idea that isn't in the issues? Open an issue first, so we can agree on it before you write code.
+
+## How to take an issue
+
+1. Comment on the issue that you'd like to work on it. We assign it to you, usually within a day.
+2. One issue at a time, please, so others get a chance too.
+3. Open a pull request within a week, even a draft. If you need more time, say so in the issue; without news
+   for a week, the issue opens up again.
+4. Link the issue in the pull request ("Closes #11").
+
+Taking part in Winter of Code Social? Nothing extra to do: we add the `wocs` and level labels to your pull
+request before merging it.
+
+## Using AI tools
+
+AI-assisted contributions are welcome, as long as you understand the change, tested it, and can explain it
+in the review. Pull requests that look mass-generated, don't run, or that the author can't explain are closed.
 
 ## Contributor License Agreement
 

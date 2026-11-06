@@ -328,8 +328,8 @@ The full list, with what is done, is in [issue #10](https://github.com/GianlucaB
 
 ## Contributing
 
-Issues and pull requests are welcome; [CONTRIBUTING.md](CONTRIBUTING.md) has the setup and the map of the
-code. Good first steps: the issues labelled
+Issues and pull requests are welcome; [CONTRIBUTING.md](CONTRIBUTING.md) has the setup, the map of the
+code, how to take an issue and the rules for AI-assisted work. Good first steps: the issues labelled
 [good first issue](https://github.com/GianlucaBave/murmury/issues?q=is%3Aopen+label%3A%22good+first+issue%22)
 (for example [#16](https://github.com/GianlucaBave/murmury/issues/16), a local model on another computer),
 trying it with a service other than Anthropic and reporting what breaks
