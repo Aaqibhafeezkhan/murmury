@@ -124,8 +124,10 @@ uv run --with pillow --with numpy python scripts/check_hidden.py
 ```
 
 It shows a box set up like Murmury's window next to an ordinary one and captures the screen with
-ScreenCaptureKit (what Zoom, Meet and Teams use), `screencapture` and CGWindowListCreateImage. On macOS
-26.6.2 (13 October 2026) the hidden box was 0 pixels in all three, the ordinary one fully visible. Run it
+ScreenCaptureKit (what Zoom, Meet and Teams use), `screencapture` and CGWindowListCreateImage, twice: first
+with the box's hiding switched off, where it must show up (so the test can see it), then switched on. On macOS
+26.6.2 (6 November 2026) the box was visible in all three captures with hiding off (93,017 px in
+ScreenCaptureKit) and 0 pixels in all three with hiding on, while the ordinary box stayed visible. Run it
 again after each macOS update.
 
 ## Measured (7 October 2026, MacBook Pro, Apple Silicon)
