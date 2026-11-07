@@ -28,7 +28,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from copilot import material, providers
-from copilot.answer import Answer
+from copilot.answer import ANSWER_MODEL, Answer
 
 FIXTURES = Path(__file__).parent / "fixtures"
 SITUATION = "a sales call with a prospective customer"
@@ -194,13 +194,13 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Do the answers come from the loaded document?")
     parser.add_argument("--provider", choices=[p.id for p in providers.PROVIDERS], default=providers.DEFAULT,
                         help="the AI service, as in the app (default: anthropic)")
-    parser.add_argument("--model", default=None, help="answer model (default for anthropic: claude-sonnet-5-5)")
+    parser.add_argument("--model", default=None, help=f"answer model (default for anthropic: {ANSWER_MODEL}, as in the app)")
     parser.add_argument("--runs", type=int, default=1, help="runs per version; scores are passed/runs")
     parser.add_argument("--show-answers", action="store_true", help="print each answer")
     args = parser.parse_args(argv)
 
     service = providers.provider(args.provider)
-    model = args.model or ("claude-sonnet-5-5" if service.id == "anthropic" else None)
+    model = args.model or (ANSWER_MODEL if service.id == "anthropic" else None)
     if not model:
         parser.error(f"--model is required for {service.id} (for example gemma3:12b on ollama)")
     key = providers.api_key(service.id)[0]
