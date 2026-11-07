@@ -10,10 +10,6 @@
 </p>
 
 <p align="center">
-  🚀 <b>Murmury is live on Product Hunt today.</b> <a href="https://www.producthunt.com/products/murmury?launch=murmury">Try it and tell us what breaks →</a>
-</p>
-
-<p align="center">
   <a href="https://github.com/GianlucaBave/murmury/releases/latest/download/Murmury.dmg"><img src="https://img.shields.io/badge/Download_for_Mac-Murmury.dmg-1fa463?style=for-the-badge&logo=apple&logoColor=white" alt="Download Murmury for Mac"></a>
 </p>
 
