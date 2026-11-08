@@ -15,9 +15,9 @@ import threading
 import time
 from pathlib import Path
 
-from PySide6.QtCore import QObject, QPoint, Qt, Signal
-from PySide6.QtGui import QFont, QKeySequence, QShortcut
-from PySide6.QtWidgets import (QApplication, QFrame, QHBoxLayout, QLabel, QLineEdit, QPushButton,
+from PySide6.QtCore import QObject, QPoint, Qt, QUrl, Signal
+from PySide6.QtGui import QDesktopServices, QFont, QKeySequence, QShortcut
+from PySide6.QtWidgets import (QApplication, QFrame, QHBoxLayout, QLabel, QLineEdit, QMenuBar, QPushButton,
                                QScrollArea, QSizeGrip, QVBoxLayout, QWidget)
 
 from . import material
@@ -447,6 +447,10 @@ def main(argv: list[str] | None = None) -> None:
     app = QApplication(sys.argv)
     app.setFont(QFont(".AppleSystemUIFont", 13))
     theme.apply_saved()
+    from .setup import REPO_URL
+    menu_bar = QMenuBar()  # no parent: the Mac menu bar, there whenever Murmury is in front
+    star = menu_bar.addMenu("Help").addAction("Star Murmury on GitHub")
+    star.triggered.connect(lambda: QDesktopServices.openUrl(QUrl(REPO_URL)))
     if not args.docs:
         from .setup import SetupDialog
 

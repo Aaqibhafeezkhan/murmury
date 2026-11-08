@@ -1,6 +1,6 @@
 # Contributing to Murmury
 
-Issues, ideas and pull requests are welcome.
+Issues, ideas and pull requests are welcome. If Murmury helps you, a star on GitHub helps others find it.
 
 ## Run it from source
 

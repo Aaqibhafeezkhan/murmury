@@ -10,7 +10,8 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/GianlucaBave/murmury/releases/latest/download/Murmury.dmg"><img src="https://img.shields.io/badge/Download_for_Mac-Murmury.dmg-1fa463?style=for-the-badge&logo=apple&logoColor=white" alt="Download Murmury for Mac"></a>
+  <a href="https://github.com/GianlucaBave/murmury/releases/latest/download/Murmury.dmg"><img src="https://img.shields.io/badge/Download_for_Mac-Murmury.dmg-1fa463?style=for-the-badge&logo=apple&logoColor=white" alt="Download Murmury for Mac"></a><br>
+  <sub>If Murmury helps you, a ⭐ helps others find it.</sub>
 </p>
 
 <p align="center">
@@ -58,7 +59,7 @@ Speech is transcribed on your Mac with Whisper. No bot joins the call and nothin
 OpenRouter, or a model you run yourself, on your Mac or another computer, through Ollama or LM Studio.
 Gemini, Groq and OpenRouter have free tiers; local models cost nothing.
 
-**Free and open source** (GPL-3.0). If the elf helps you, a ⭐ helps the elf.
+**Free and open source** (GPL-3.0).
 
 ## Quick start
 
