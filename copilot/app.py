@@ -502,4 +502,3 @@ def count_answered_call() -> None:
 
 if __name__ == "__main__":
     main()
-    
