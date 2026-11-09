@@ -22,8 +22,8 @@ coll = COLLECT(exe, a.binaries, a.datas, name="Murmury", upx=False)
 app = BUNDLE(
     coll, name="Murmury.app", icon="murmury.icns", bundle_identifier="dev.murmury.app",
     info_plist={
-        "CFBundleShortVersionString": "0.1.4",
-        "CFBundleVersion": "5",
+        "CFBundleShortVersionString": "0.1.5",
+        "CFBundleVersion": "6",
         "LSMinimumSystemVersion": "13.0",
         "NSHighResolutionCapable": True,
         "NSMicrophoneUsageDescription": "Murmury listens to your microphone to tell your voice apart "
