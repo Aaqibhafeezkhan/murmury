@@ -315,7 +315,8 @@ class Window(QWidget):
             if not question and not lines:
                 continue
             md = f"## {question}" if question else ""
-            bullets = "\n".join(f"- {line.lstrip("-•* ").strip()}" for line in lines if line.strip())
+            bullets = "\n".join(f"- {line[4:].strip() if line.upper().startswith('SAY:') else line.lstrip('-•* ').strip()}"
+                                for line in lines)
             if md and bullets:
                 parts.append(f"{md}\n\n{bullets}")
             elif md:

@@ -85,7 +85,6 @@ def test_pptx_uses_declared_slide_order_and_includes_notes(tmp_path):
     assert as_prompt(load([path])) == as_prompt(load([path]))
 
 
-
 def test_text_file_in_cp1252_loads_without_losing_accents(tmp_path):
     notes = tmp_path / "notes.txt"
     notes.write_bytes(b"Caf\xe9 notes\n")
