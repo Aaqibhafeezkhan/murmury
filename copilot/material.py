@@ -1,4 +1,3 @@
-
 """The material the copilot answers from: the files chosen before the call, turned into text.
 
 PDF pages keep their page number, so an answer can point to it. Spreadsheets keep their cached
@@ -27,24 +26,20 @@ def _pdf(path: Path) -> tuple[str, str | None]:
     from pypdf import PdfReader
 
     reader = PdfReader(path)
-
     if reader.is_encrypted:
         try:
             if not reader.decrypt(""):
                 return "", "password-protected PDF"
         except Exception:
             return "", "password-protected PDF"
-
     pages = []
     for number, page in enumerate(reader.pages, start=1):
         text = (page.extract_text() or "").strip()
         if text:
             pages.append(f"[page {number}]\n{text}")
-
     extracted = "\n\n".join(pages)
     if not extracted:
         return "", "no text found (scanned?)"
-
     return extracted, None
 
 
@@ -216,10 +211,8 @@ def _text(path: Path) -> str:
 
 def load(paths: list[Path]) -> list[Source]:
     sources = []
-
     for path in paths:
         suffix = path.suffix.lower()
-
         if suffix == ".pdf":
             kind = "pdf"
         elif suffix in (".xlsx", ".xlsm"):
@@ -230,7 +223,6 @@ def load(paths: list[Path]) -> list[Source]:
             kind = "pptx"
         else:
             kind = "text"
-
         try:
             if kind == "pdf":
                 text, warning = _pdf(path)
@@ -249,12 +241,9 @@ def load(paths: list[Path]) -> list[Source]:
         except Exception:
             text = ""
             warning = f"could not read {kind.upper()}"
-
         if not text.strip() and warning is None:
             warning = "no text found"
-
         sources.append(Source(path.name, kind, text, warning))
-
     return sources
 
 

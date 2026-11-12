@@ -1,4 +1,3 @@
-
 from pathlib import Path
 from zipfile import ZIP_DEFLATED, ZipFile
 
