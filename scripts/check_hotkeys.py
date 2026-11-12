@@ -1,6 +1,6 @@
 """Check that global hotkeys work on this Mac, with no call app and no API key.
 
-    uv run python scripts/check_hotkeys.py
+    uv run python -m scripts.check_hotkeys
 
 Click another app (Zoom, a browser, anything), then press Option+Space and Option+K. Each press prints a line
 here. Ctrl+C stops it. Needs a Mac; elsewhere it says so and exits.
