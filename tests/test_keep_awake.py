@@ -2,8 +2,6 @@ import os
 import subprocess
 import sys
 
-import pytest
-
 from copilot.app import keep_awake
 
 
@@ -15,8 +13,6 @@ def test_keep_awake_starts_caffeinate_on_darwin(monkeypatch):
 
     monkeypatch.setattr(sys, "platform", "darwin")
     monkeypatch.setattr(subprocess, "Popen", fake_popen)
-    import os
-
     monkeypatch.setattr(os, "getpid", lambda: 1234)
     keep_awake()
     assert started == [["caffeinate", "-di", "-w", "1234"]]
